@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Verificación y Factor Integrante</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        input[type="text"] {
+            width: 95%;
+            font-size: 16px;
+            padding: 8px;
+            margin: 10px 0;
+        }
+        input[type="submit"] {
+            padding: 10px 25px;
+            font-size: 16px;
+        }
+        .resultado {
+            background-color: #d9f0ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Verificar Ecuación Exacta y Encontrar Factor Integrante</h2>
+    <form method="POST">
+        <label for="M">Ingrese \( M(x,y) \):</label><br/>
+        <input type="text" name="M" value="{{ M_valor }}" required/><br/>
+        <label for="N">Ingrese \( N(x,y) \):</label><br/>
+        <input type="text" name="N" value="{{ N_valor }}" required/><br/>
+        <input type="submit" value="Analizar"/>
+    </form>
+
+    {% if resultado %}
+        <div class="resultado">
+            {% if resultado.error %}
+                <p style="color:red;">{{ resultado.error }}</p>
+            {% else %}
+                <p><strong>Ecuación diferencial original:</strong></p>
+                <p>\( M(x,y) = {{ resultado.M }} \)</p>
+                <p>\( N(x,y) = {{ resultado.N }} \)</p>
+
+                <p><strong>Derivadas parciales iniciales:</strong></p>
+                <p>\( \frac{\partial M}{\partial y} = {{ resultado.dM_dy }} \)</p>
+                <p>\( \frac{\partial N}{\partial x} = {{ resultado.dN_dx }} \)</p>
+
+                <p><strong>¿Es exacta inicialmente?:</strong> {{ resultado.exacta_inicial }}</p>
+                <p><em>{{ resultado.mensaje_inicial }}</em></p>
+
+                {% if resultado.factor %}
+                    <hr/>
+                    <p><strong>Factor integrante encontrado ({{ resultado.tipo_factor }}):</strong> \( \mu = {{ resultado.factor }} \)</p>
+                    <p><strong>Multiplicamos la ecuación por el factor integrante:</strong></p>
+                    <p>\( M_{nuevo} = {{ resultado.M_nuevo }} \)</p>
+                    <p>\( N_{nuevo} = {{ resultado.N_nuevo }} \)</p>
+
+                    <p><strong>Derivadas parciales después del factor:</strong></p>
+                    <p>\( \frac{\partial M_{nuevo}}{\partial y} = {{ resultado.dM_dy2 }} \)</p>
+                    <p>\( \frac{\partial N_{nuevo}}{\partial x} = {{ resultado.dN_dx2 }} \)</p>
+
+                    <p><strong>¿Es exacta ahora?:</strong> {{ resultado.exacta_final }}</p>
+                    <p><em>{{ resultado.mensaje_final }}</em></p>
+
+                    {% if resultado.exacta_final == "Sí" %}
+                        <p><strong>Solución implícita:</strong></p>
+                        <p>\( {{ resultado.solucion }} \)</p>
+                    {% endif %}
+                {% else %}
+                    <p><em>{{ resultado.mensaje_final }}</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+</body>
+</html>
